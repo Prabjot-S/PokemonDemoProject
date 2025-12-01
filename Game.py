@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import button
 
@@ -136,6 +138,9 @@ show_slash_attack = False
 running = True
 blastoise_hp = 100
 giratina_hp = 100
+blastoise_heals = 3
+giratina_heals = 3
+turn_count = 1
 while running:
 
     for event in pygame.event.get():
@@ -205,7 +210,7 @@ while running:
         #attack menu for giratina
         giratina_rect = gif_frames_giratina[current_frame_giratina].get_rect(topleft=(10, 220))
         # check if giratina was clicked
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and turn_count % 2 == 1: #only odd turns
             mouse_pos = pygame.mouse.get_pos()
             if giratina_rect.collidepoint(mouse_pos):
                 show_attack_menu_giratina = True
@@ -235,14 +240,30 @@ while running:
                             show_slash_attack = True
                             current_frame_slash = 0
                             frame_counter_slash = 0
-                            health_bar_blastoise.hp -= 20
-                            print(blastoise_hp)
+
+                            damage = random.randint(10,30) # random damage
+                            health_bar_blastoise.hp -= damage
+                            print(f'Hit for {damage} damage!')
+                            turn_count += 1
+
+                            #winning condition check
+                            if health_bar_blastoise.hp <= 80:
+                                print('giratina won')
+                                state = 'winner'
+
                         elif i == 1:
-                            if health_bar_giratina.hp < health_bar_giratina.max_hp:
-                                health_bar_giratina.hp += 10
-                                print(f'Giratina: {giratina_hp}')
+                            if health_bar_giratina.hp < health_bar_giratina.max_hp and giratina_heals > 0:
+
+                                if 100 > health_bar_giratina.hp > 90:
+                                    health_bar_giratina.hp = 100
+                                else:
+                                    health_bar_giratina.hp += 10
+
+                                giratina_heals -= 1
+                                print(f'Giratina healed by 10 | Current HP: {health_bar_giratina.hp}')
+                                turn_count += 1
                             else:
-                                print('Cannot Heal More')
+                                print('Healing limit reached')
                         elif i == 2:
                             print('CONCEDE')
 
@@ -273,7 +294,7 @@ while running:
         # attack menu for blastoise
         blastoise_rect = gif_frames_blastoise[current_frame_blastoise].get_rect(topleft=(650, 235))
         # check if blastoise was clicked
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and turn_count % 2 == 0: #only even turns
             mouse_pos = pygame.mouse.get_pos()
             if blastoise_rect.collidepoint(mouse_pos):
                 show_attack_menu_blastoise = True
@@ -304,14 +325,23 @@ while running:
                             show_water_attack = True
                             current_frame_water = 0
                             frame_counter_water = 0
-                            health_bar_giratina.hp -= 20
-                            print(blastoise_hp)
+                            damage = random.randint(10,30) # random damage
+                            health_bar_giratina.hp -= damage
+                            print(f'Hit for {damage} damage!')
+                            turn_count += 1
                         elif i == 1:
-                            if health_bar_blastoise.hp < health_bar_blastoise.max_hp:
-                                health_bar_blastoise.hp += 10
-                                print(f'Blastoise: {blastoise_hp}')
+                            if health_bar_blastoise.hp < health_bar_blastoise.max_hp and blastoise_heals > 0:
+
+                                if 100 > health_bar_blastoise.hp > 90:
+                                    health_bar_blastoise.hp = 100
+                                else:
+                                    health_bar_blastoise.hp += 10
+
+                                blastoise_heals -= 1
+                                print(f'Blastoise Healed by 10 | Current HP: {health_bar_blastoise.hp}')
+                                turn_count += 1
                             else:
-                                print('Cannot Heal More')
+                                print('Healing limit reached')
                         elif i == 2:
                             print('CONCEDE')
 
@@ -343,6 +373,10 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 state = 'menu'
 
+    elif state == 'winner':
+        screen.blit(background, (0, 0))
+        screen.blit(pokemon_logo, (245, 60))
+
     # mouse position / draw cursor
     cursor_xy = pygame.mouse.get_pos()
     screen.blit(cursor_image, cursor_xy)
@@ -352,3 +386,5 @@ while running:
 
 
 pygame.quit()
+
+# 1: Pokémon shouldn't be able to heal everytime
