@@ -2,6 +2,7 @@ import random
 
 import pygame
 import button
+from button import Button
 
 pygame.init() #start up pygame
 
@@ -47,10 +48,12 @@ frame_speed = 70 #lower is faster (speed)
 #load button images
 start_button = pygame.image.load('start_btn.png').convert_alpha()
 exit_button = pygame.image.load('exit_btn.png').convert_alpha()
+play_again_button = pygame.image.load('play_again.png').convert_alpha()
 
 #button instances
 start_button = button.Button(140,235, start_button, 0.8)
 exit_button = button.Button(500,235, exit_button, 0.8)
+play_again_button = Button(340,450, play_again_button, 0.6)
 # ----------------------------------------
 
 # GRAPHICS (FOR BATTLE FIELD) ------------
@@ -107,6 +110,15 @@ frame_counter_slash = 0
 frame_speed_slash = 7
 
 # ----------------------------------------
+
+# LOADING GRAPHICS (FOR WINNER SCREEN) -------------
+
+winner_logo = pygame.image.load('winner_logo.png')
+winner_logo = pygame.transform.scale(winner_logo, (350,120))
+
+
+# --------------------------------------------------
+
 # Health Bar
 
 class HealthBar():
@@ -247,8 +259,8 @@ while running:
                             turn_count += 1
 
                             #winning condition check
-                            if health_bar_blastoise.hp <= 80:
-                                print('giratina won')
+                            if health_bar_blastoise.hp <= 0:
+                                print('Giratina won')
                                 state = 'winner'
 
                         elif i == 1:
@@ -329,6 +341,11 @@ while running:
                             health_bar_giratina.hp -= damage
                             print(f'Hit for {damage} damage!')
                             turn_count += 1
+
+                            #winning condition check
+                            if health_bar_giratina.hp <= 0:
+                                print('Blastoise won')
+                                state = 'winner'
                         elif i == 1:
                             if health_bar_blastoise.hp < health_bar_blastoise.max_hp and blastoise_heals > 0:
 
@@ -371,11 +388,51 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                health_bar_giratina.hp = 100
+                health_bar_blastoise.hp = 100
+                show_attack_menu_giratina = False
+                show_attack_menu_blastoise = False
                 state = 'menu'
 
     elif state == 'winner':
         screen.blit(background, (0, 0))
-        screen.blit(pokemon_logo, (245, 60))
+
+        #make it dim
+        dim_surface = pygame.Surface((WIDTH, HEIGHT))
+        dim_surface.fill((0,0,0))
+        dim_surface.set_alpha(175)
+        screen.blit(dim_surface, (0, 0))
+
+        screen.blit(winner_logo, (245, 60))
+
+        if health_bar_giratina.hp <= 0: #blastoise won
+
+            # animate blastoise ---------------------------------------------
+            frame_counter_blastoise += 1
+            if frame_counter_blastoise >= frame_speed_blastoise:
+                current_frame_blastoise = (current_frame_blastoise + 1) % len(gif_frames_blastoise)
+                frame_counter_blastoise = 0
+
+            screen.blit(gif_frames_blastoise[current_frame_blastoise], (350, 235))
+            # ----------------------------------------------------------------
+
+        else: #giratina won
+            # animate giratina ---------------------------------------------
+            frame_counter_giratina += 1
+            if frame_counter_giratina >= frame_speed_giratina:
+                current_frame_giratina = (current_frame_giratina + 1) % len(gif_frames_giratina)
+                frame_counter_giratina = 0
+
+            screen.blit(gif_frames_giratina[current_frame_giratina], (305, 200))
+            # ----------------------------------------------------------------
+
+        if play_again_button.draw(screen):
+            health_bar_giratina.hp = 100
+            health_bar_blastoise.hp = 100
+            state = 'menu'
+
+
+
 
     # mouse position / draw cursor
     cursor_xy = pygame.mouse.get_pos()
