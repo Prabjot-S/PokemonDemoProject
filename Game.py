@@ -6,7 +6,7 @@ from button import Button
 
 pygame.init() #start up pygame
 
-font = pygame.font.Font('PixeloidSans.ttf', 17)
+font = pygame.font.Font('graphics/PixeloidSans.ttf', 17)
 
 # BASIC SETUP ----------------------------
 WIDTH, HEIGHT = 850, 550
@@ -21,9 +21,9 @@ fade_alpha = 0  # Transparency (0 = invisible, 255 = solid black)
 fading = False
 
 # LOADING GRAPHICS (FOR MENU) -------------
-background = pygame.image.load("background.png")
+background = pygame.image.load("graphics/background.png")
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-pokemon_logo = pygame.image.load("pokemon_logo.png")
+pokemon_logo = pygame.image.load("graphics/pokemon_logo.png")
 pokemon_logo = pygame.transform.scale(pokemon_logo,(350,120))
 
 
@@ -47,10 +47,10 @@ frame_speed = 70 #lower is faster (speed)
 
 
 #load button images
-start_button = pygame.image.load('start_btn.png').convert_alpha()
-exit_button = pygame.image.load('exit_btn.png').convert_alpha()
-menu_button = pygame.image.load('menu_btn.png').convert_alpha()
-stats_button = pygame.image.load('stats_btn.png').convert_alpha()
+start_button = pygame.image.load('graphics/start_btn.png').convert_alpha()
+exit_button = pygame.image.load('graphics/exit_btn.png').convert_alpha()
+menu_button = pygame.image.load('graphics/menu_btn.png').convert_alpha()
+stats_button = pygame.image.load('graphics/stats_btn.png').convert_alpha()
 
 #button instances
 start_button = button.Button(140,235, start_button, 0.8)
@@ -60,7 +60,7 @@ stats_button = Button(20, 460 ,stats_button, 0.4)
 # ----------------------------------------
 
 # GRAPHICS (FOR BATTLE FIELD) ------------
-battle_background = pygame.image.load("background-hero.png")
+battle_background = pygame.image.load("graphics/background-hero.png")
 battle_background = pygame.transform.scale(battle_background, (WIDTH, HEIGHT))
 
 #blastoise animation loading
@@ -116,14 +116,14 @@ frame_speed_slash = 7
 
 # LOADING GRAPHICS (FOR WINNER SCREEN) -------------
 
-winner_logo = pygame.image.load('winner_logo.png')
+winner_logo = pygame.image.load('graphics/winner_logo.png')
 winner_logo = pygame.transform.scale(winner_logo, (350,120))
 
 # --------------------------------------------------
 
 # LOADING GRAPHICS / Creating file (FOR STATS SCREEN) -------------
 
-stats_logo = pygame.image.load("stats_logo.png")
+stats_logo = pygame.image.load("graphics/stats_logo.png")
 stats_logo = pygame.transform.scale(stats_logo,(350,120))
 
 #stats menu vars
@@ -178,13 +178,13 @@ health_bar_blastoise = HealthBar(630, 440, 200, 23, 100)
 
 # icon imports
 
-heart_icon = pygame.image.load('heart_image.png')
+heart_icon = pygame.image.load('graphics/heart_image.png')
 heart_icon = pygame.transform.scale(heart_icon, (50, 30))
-trophy_icon = pygame.image.load('trophy_image.png')
+trophy_icon = pygame.image.load('graphics/trophy_image.png')
 trophy_icon = pygame.transform.scale(trophy_icon, (35, 30))
-giratina_type = pygame.image.load('psy_icon.png')
+giratina_type = pygame.image.load('graphics/psy_icon.png')
 giratina_type = pygame.transform.scale(giratina_type, (30, 30))
-blastoise_type = pygame.image.load('water_icon.png')
+blastoise_type = pygame.image.load('graphics/water_icon.png')
 blastoise_type = pygame.transform.scale(blastoise_type, (30, 30))
 
 # ---------------------------------------------------
