@@ -121,7 +121,7 @@ winner_logo = pygame.transform.scale(winner_logo, (350,120))
 
 # --------------------------------------------------
 
-# LOADING GRAPHICS (FOR STATS SCREEN) -------------
+# LOADING GRAPHICS / Creating file (FOR STATS SCREEN) -------------
 
 stats_logo = pygame.image.load("stats_logo.png")
 stats_logo = pygame.transform.scale(stats_logo,(350,120))
@@ -131,6 +131,21 @@ show_attack_menu_giratina = False
 show_attack_menu_blastoise = False
 attack_menu_x_giratina, attack_menu_y_giratina = 200,200
 attack_menu_x_blastoise, attack_menu_y_blastoise = 480,200
+
+def save_scores(giratina_wins, blastoise_wins):
+    with open('pokemon_game_scores.txt', 'w') as f:
+        f.write(f'{giratina_wins},{blastoise_wins}')
+
+def load_scores():
+    try:
+        with open('pokemon_game_scores.txt', 'r') as f:
+            data = f.read().split(',')
+            return int(data[0]), int(data[1])
+    except:
+        return 0,0
+
+#load scores when game starts
+giratina_wins, blastoise_wins = load_scores() #call func, and store return values in vars
 
 # --------------------------------------------------
 
@@ -177,15 +192,16 @@ blastoise_type = pygame.transform.scale(blastoise_type, (30, 30))
 
 
 #game loop ------------------------------------------
-state = 'menu'
-show_water_attack = False
+state = 'menu' #for state
+show_water_attack = False #for attacks
 show_slash_attack = False
-running = True
-blastoise_hp = 100
+running = True #for loop
+blastoise_hp = 100 #for hp
 giratina_hp = 100
-blastoise_heals = 3
+blastoise_heals = 3 #for healing potions
 giratina_heals = 3
-turn_count = 1
+turn_count = 1 #for turns
+winner_recorded = False #for scores
 while running:
 
     for event in pygame.event.get():
@@ -212,6 +228,7 @@ while running:
             #FADING
             fading = True
             fade_alpha = 255  # Start fully black
+            winner_recorded = False
         if exit_button.draw(screen):
             running = False
         if stats_button.draw(screen):
@@ -444,6 +461,16 @@ while running:
 
         screen.blit(winner_logo, (245, 60))
 
+        if not winner_recorded:
+            if health_bar_giratina.hp <= 0:
+                blastoise_wins +=1
+            else:
+                giratina_wins += 1
+
+            save_scores(giratina_wins, blastoise_wins)
+            winner_recorded = True
+
+
         if health_bar_giratina.hp <= 0: #blastoise won
 
             # animate blastoise ---------------------------------------------
@@ -455,6 +482,7 @@ while running:
             screen.blit(gif_frames_blastoise[current_frame_blastoise], (350, 235))
             # ----------------------------------------------------------------
 
+
         else: #giratina won
             # animate giratina ---------------------------------------------
             frame_counter_giratina += 1
@@ -464,6 +492,7 @@ while running:
 
             screen.blit(gif_frames_giratina[current_frame_giratina], (305, 200))
             # ----------------------------------------------------------------
+
 
         if menu_button.draw(screen):
             health_bar_giratina.hp = 100
@@ -511,24 +540,26 @@ while running:
 
         giratina_health = font.render(f'Health: 100', True, (255,255,255))
         giratina_ability = font.render(f'Ability: Shadow Claw', True, (255,255,255))
-        giratina_wins = font.render(f'Giratina Wins:', True, (255, 255, 255))
+        giratina_wins_text = font.render(f'Giratina Wins: {giratina_wins}', True, (255, 255, 255))
 
         blastoise_health = font.render(f'Health: 100', True, (255, 255, 255))
         blastoise_ability = font.render(f'Ability: Hydro Pump', True, (255,255,255))
-        blastoise_wins = font.render(f'Blastoise Wins:', True, (255, 255, 255))
+        blastoise_wins_text = font.render(f'Blastoise Wins: {blastoise_wins}', True, (255, 255, 255))
+
+
 
         screen.blit(giratina_health, (90, 390))
         screen.blit(heart_icon, (35,385)) #heart
         screen.blit(giratina_ability, (90, 430))
         screen.blit(giratina_type, (45,425)) #icon
-        screen.blit(giratina_wins, (90, 470))
+        screen.blit(giratina_wins_text, (90, 470))
         screen.blit(trophy_icon, (45,465)) #trophy
 
         screen.blit(blastoise_health, (655, 390))
         screen.blit(heart_icon, (600,385)) #heart
         screen.blit(blastoise_ability, (655, 430))
         screen.blit(blastoise_type, (610,425)) #icon
-        screen.blit(blastoise_wins, (655, 470))
+        screen.blit(blastoise_wins_text, (655, 470))
         screen.blit(trophy_icon, (610, 465))  # trophy
 
 
