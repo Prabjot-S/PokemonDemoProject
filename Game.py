@@ -26,6 +26,7 @@ background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 pokemon_logo = pygame.image.load("pokemon_logo.png")
 pokemon_logo = pygame.transform.scale(pokemon_logo,(350,120))
 
+
 #import cursor
 cursor_image = pygame.image.load('graphics/pokedex cursor.png')
 cursor_image = pygame.transform.scale(cursor_image, (75,75))
@@ -48,12 +49,14 @@ frame_speed = 70 #lower is faster (speed)
 #load button images
 start_button = pygame.image.load('start_btn.png').convert_alpha()
 exit_button = pygame.image.load('exit_btn.png').convert_alpha()
-play_again_button = pygame.image.load('play_again.png').convert_alpha()
+menu_button = pygame.image.load('menu_btn.png').convert_alpha()
+stats_button = pygame.image.load('stats_btn.png').convert_alpha()
 
 #button instances
 start_button = button.Button(140,235, start_button, 0.8)
 exit_button = button.Button(500,235, exit_button, 0.8)
-play_again_button = Button(340,450, play_again_button, 0.6)
+menu_button = Button(340,450, menu_button, 0.6)
+stats_button = Button(20, 460 ,stats_button, 0.4)
 # ----------------------------------------
 
 # GRAPHICS (FOR BATTLE FIELD) ------------
@@ -116,8 +119,21 @@ frame_speed_slash = 7
 winner_logo = pygame.image.load('winner_logo.png')
 winner_logo = pygame.transform.scale(winner_logo, (350,120))
 
+# --------------------------------------------------
+
+# LOADING GRAPHICS (FOR STATS SCREEN) -------------
+
+stats_logo = pygame.image.load("stats_logo.png")
+stats_logo = pygame.transform.scale(stats_logo,(350,120))
+
+#stats menu vars
+show_attack_menu_giratina = False
+show_attack_menu_blastoise = False
+attack_menu_x_giratina, attack_menu_y_giratina = 200,200
+attack_menu_x_blastoise, attack_menu_y_blastoise = 480,200
 
 # --------------------------------------------------
+
 
 # Health Bar
 
@@ -141,6 +157,23 @@ class HealthBar():
 
 health_bar_giratina = HealthBar(22, 440, 200, 23, 100)
 health_bar_blastoise = HealthBar(630, 440, 200, 23, 100)
+
+
+# GRAPHIC LOADING (STATS) --------------------------
+
+# icon imports
+
+heart_icon = pygame.image.load('heart_image.png')
+heart_icon = pygame.transform.scale(heart_icon, (50, 30))
+trophy_icon = pygame.image.load('trophy_image.png')
+trophy_icon = pygame.transform.scale(trophy_icon, (35, 30))
+giratina_type = pygame.image.load('psy_icon.png')
+giratina_type = pygame.transform.scale(giratina_type, (30, 30))
+blastoise_type = pygame.image.load('water_icon.png')
+blastoise_type = pygame.transform.scale(blastoise_type, (30, 30))
+
+# ---------------------------------------------------
+
 
 
 #game loop ------------------------------------------
@@ -181,6 +214,8 @@ while running:
             fade_alpha = 255  # Start fully black
         if exit_button.draw(screen):
             running = False
+        if stats_button.draw(screen):
+            state = 'stats'
 
     elif state == 'battle':
         screen.blit(battle_background, (0,0))
@@ -278,6 +313,8 @@ while running:
                                 print('Healing limit reached')
                         elif i == 2:
                             print('CONCEDE')
+                            state = 'winner'
+                            health_bar_giratina.hp = 0
 
                         show_attack_menu_giratina = False
 
@@ -361,6 +398,8 @@ while running:
                                 print('Healing limit reached')
                         elif i == 2:
                             print('CONCEDE')
+                            state = 'winner'
+                            health_bar_blastoise.hp = 0
 
                         show_attack_menu_blastoise = False
 
@@ -426,12 +465,71 @@ while running:
             screen.blit(gif_frames_giratina[current_frame_giratina], (305, 200))
             # ----------------------------------------------------------------
 
-        if play_again_button.draw(screen):
+        if menu_button.draw(screen):
             health_bar_giratina.hp = 100
             health_bar_blastoise.hp = 100
             state = 'menu'
 
+    elif state == 'stats':
+        screen.blit(battle_background, (0, 0))
 
+        # make it dim
+        dim_surface = pygame.Surface((WIDTH, HEIGHT))
+        dim_surface.fill((0, 0, 0))
+        dim_surface.set_alpha(175)
+        screen.blit(dim_surface, (0, 0))
+
+        screen.blit(stats_logo, (245, 60))
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                health_bar_giratina.hp = 100
+                health_bar_blastoise.hp = 100
+                show_attack_menu_giratina = False
+                show_attack_menu_blastoise = False
+                state = 'menu'
+
+        # animate giratina ---------------------------------------------
+        frame_counter_giratina += 1
+        if frame_counter_giratina >= frame_speed_giratina:
+            current_frame_giratina = (current_frame_giratina + 1) % len(gif_frames_giratina)
+            frame_counter_giratina = 0
+
+        screen.blit(gif_frames_giratina[current_frame_giratina], (40, 160))
+        # ----------------------------------------------------------------
+
+        # animate blastoise ---------------------------------------------
+        frame_counter_blastoise += 1
+        if frame_counter_blastoise >= frame_speed_blastoise:
+            current_frame_blastoise = (current_frame_blastoise + 1) % len(gif_frames_blastoise)
+            frame_counter_blastoise = 0
+
+        screen.blit(gif_frames_blastoise[current_frame_blastoise], (620, 180))
+        # ----------------------------------------------------------------
+
+        #text under pokemons
+
+        giratina_health = font.render(f'Health: 100', True, (255,255,255))
+        giratina_ability = font.render(f'Ability: Shadow Claw', True, (255,255,255))
+        giratina_wins = font.render(f'Giratina Wins:', True, (255, 255, 255))
+
+        blastoise_health = font.render(f'Health: 100', True, (255, 255, 255))
+        blastoise_ability = font.render(f'Ability: Hydro Pump', True, (255,255,255))
+        blastoise_wins = font.render(f'Blastoise Wins:', True, (255, 255, 255))
+
+        screen.blit(giratina_health, (90, 390))
+        screen.blit(heart_icon, (35,385)) #heart
+        screen.blit(giratina_ability, (90, 430))
+        screen.blit(giratina_type, (45,425)) #icon
+        screen.blit(giratina_wins, (90, 470))
+        screen.blit(trophy_icon, (45,465)) #trophy
+
+        screen.blit(blastoise_health, (655, 390))
+        screen.blit(heart_icon, (600,385)) #heart
+        screen.blit(blastoise_ability, (655, 430))
+        screen.blit(blastoise_type, (610,425)) #icon
+        screen.blit(blastoise_wins, (655, 470))
+        screen.blit(trophy_icon, (610, 465))  # trophy
 
 
     # mouse position / draw cursor
@@ -443,5 +541,3 @@ while running:
 
 
 pygame.quit()
-
-# 1: Pokémon shouldn't be able to heal everytime
