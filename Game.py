@@ -225,6 +225,9 @@ while running:
 
         if start_button.draw(screen):
             state = 'battle'
+            turn_count = 1
+            giratina_heals = 3
+            blastoise_heals = 3
             #FADING
             fading = True
             fade_alpha = 255  # Start fully black
