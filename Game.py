@@ -241,7 +241,6 @@ while running:
         screen.blit(battle_background, (0,0))
 
         #health bars ---------------------------------------------------
-
         health_bar_giratina.draw(screen)
         health_bar_blastoise.draw(screen)
 
@@ -351,7 +350,6 @@ while running:
             screen.blit(gif_frames_slash[current_frame_slash], (600, 200))
 
         # ----------------------------------------------------------------
-
         #BLASTOISE
 
         pokemon_name = 'Blastoise'
@@ -435,7 +433,6 @@ while running:
 
             screen.blit(gif_frames_water[current_frame_water], (15, 250))
 
-
         #FADING
         if fading:
             fade_alpha -= 3  # Fade out (decrease by 5 each frame)
@@ -473,7 +470,6 @@ while running:
             save_scores(giratina_wins, blastoise_wins)
             winner_recorded = True
 
-
         if health_bar_giratina.hp <= 0: #blastoise won
 
             # animate blastoise ---------------------------------------------
@@ -484,7 +480,6 @@ while running:
 
             screen.blit(gif_frames_blastoise[current_frame_blastoise], (350, 235))
             # ----------------------------------------------------------------
-
 
         else: #giratina won
             # animate giratina ---------------------------------------------
@@ -548,8 +543,6 @@ while running:
         blastoise_health = font.render(f'Health: 100', True, (255, 255, 255))
         blastoise_ability = font.render(f'Ability: Hydro Pump', True, (255,255,255))
         blastoise_wins_text = font.render(f'Blastoise Wins: {blastoise_wins}', True, (255, 255, 255))
-
-
 
         screen.blit(giratina_health, (90, 390))
         screen.blit(heart_icon, (35,385)) #heart
