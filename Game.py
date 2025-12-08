@@ -1,7 +1,9 @@
+import json
 import random
 
 import pygame
 import button
+from datetime import datetime
 from button import Button
 
 pygame.init() #start up pygame
@@ -51,12 +53,14 @@ start_button = pygame.image.load('graphics/start_btn.png').convert_alpha()
 exit_button = pygame.image.load('graphics/exit_btn.png').convert_alpha()
 menu_button = pygame.image.load('graphics/menu_btn.png').convert_alpha()
 stats_button = pygame.image.load('graphics/stats_btn.png').convert_alpha()
+history_button = pygame.image.load('graphics/history_btn.png').convert_alpha()
 
 #button instances
 start_button = button.Button(140,235, start_button, 0.8)
 exit_button = button.Button(500,235, exit_button, 0.8)
 menu_button = Button(340,450, menu_button, 0.6)
 stats_button = Button(20, 460 ,stats_button, 0.4)
+history_button = Button(350, 300, history_button, 0.05)
 # ----------------------------------------
 
 # GRAPHICS (FOR BATTLE FIELD) ------------
@@ -144,6 +148,40 @@ def load_scores():
     except:
         return 0,0
 
+
+#->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->
+
+def save_history(winner):
+    # like a dictionary
+    battle_data = {
+        'winner' : winner,
+        'timestamp' : datetime.now().strftime('%m/%d %H:%M')
+    }
+
+    #load old history
+    try:
+        with open('battle_history.json', 'r') as f:
+            history = json.load(f) #convert the json text into --> python list
+    except:
+        history = []
+
+    history.append(battle_data)
+    history = history[-3:] #keeping last 3
+
+    #save back to file
+    with open('battle_history.json', 'w') as f:
+        json.dump(history, f, indent=2) #Python list --> JSON text
+
+def load_history():
+    try:
+        with open('battle_history.json', 'r') as f:
+            return json.load(f)
+    except:
+        return []
+
+
+#->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->
+
 #load scores when game starts
 giratina_wins, blastoise_wins = load_scores() #call func, and store return values in vars
 
@@ -202,6 +240,7 @@ blastoise_heals = 3 #for healing potions
 giratina_heals = 3
 turn_count = 1 #for turns
 winner_recorded = False #for scores
+show_history = False
 while running:
 
     for event in pygame.event.get():
@@ -464,10 +503,13 @@ while running:
         if not winner_recorded:
             if health_bar_giratina.hp <= 0:
                 blastoise_wins +=1
+                winner_name = 'Blastoise'
             else:
                 giratina_wins += 1
+                winner_name = 'Giratina'
 
             save_scores(giratina_wins, blastoise_wins)
+            save_history(winner_name)
             winner_recorded = True
 
         if health_bar_giratina.hp <= 0: #blastoise won
@@ -557,6 +599,39 @@ while running:
         screen.blit(blastoise_type, (610,425)) #icon
         screen.blit(blastoise_wins_text, (655, 470))
         screen.blit(trophy_icon, (610, 465))  # trophy
+
+        #for the 3 round history
+        if history_button.draw(screen):
+            show_history = not show_history  # Toggle on/off
+
+        #show history overlay if toggled
+        if show_history:
+            history_box = pygame.Surface((400,300))
+            history_box.fill((0,0,0))
+            history_box.set_alpha(200)
+            screen.blit(history_box, (225, 150))
+
+            # Title
+            history_title = font.render('LAST 3 BATTLES', True, (255, 255, 255))
+            screen.blit(history_title, (350, 180))
+
+            #load, display history
+            history = load_history()
+
+            if len(history) == 0:
+                no_battles = font.render('No battles yet!', True, (255, 255, 255))
+                screen.blit(no_battles, (330, 280))
+            else:
+                for i, battle in enumerate(history):
+                    y_pos = 230 + i * 60
+
+                    battle_num = font.render(f'Battle {i + 1}:', True, (255, 255, 255))
+                    winner_text = font.render(f'Winner: {battle["winner"]}', True, (255, 255, 255))
+                    time_text = font.render(f'Time: {battle["timestamp"]}', True, (200, 200, 200))
+
+                    screen.blit(battle_num, (260, y_pos))
+                    screen.blit(winner_text, (260, y_pos + 20))
+                    screen.blit(time_text, (260, y_pos + 40))
 
 
     # mouse position / draw cursor
