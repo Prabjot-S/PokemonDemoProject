@@ -60,7 +60,7 @@ start_button = button.Button(140,235, start_button, 0.8)
 exit_button = button.Button(500,235, exit_button, 0.8)
 menu_button = Button(340,450, menu_button, 0.6)
 stats_button = Button(20, 460 ,stats_button, 0.4)
-history_button = Button(350, 300, history_button, 0.05)
+history_button = Button(350, 455, history_button, 0.05)
 # ----------------------------------------
 
 # GRAPHICS (FOR BATTLE FIELD) ------------
