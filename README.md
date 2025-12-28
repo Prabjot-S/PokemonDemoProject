@@ -12,7 +12,7 @@ This project is a simplified turn-based Pokémon battle game built using Python 
 ## 🛠 Technologies Used
   - Python 3
   - Pygame
-  - Simple file system storage for the game stats
+  - Simple file system storage for game stats
 
 ## 📁 Project Structure
 - Game.py (Main game loop, states, battle logic, rendering)
