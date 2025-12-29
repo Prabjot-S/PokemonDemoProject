@@ -22,7 +22,7 @@ This project is a simplified turn-based Pokémon battle game built using Python 
 
 ## ▶️ How to Run
 - Install dependencies: pip install pygame
-- Run the game: python Game.py
+- Run game: python Game.py
 
 ## 📚 Purpose
 This project was created for CSCI-312: Theory of Computation to illustrate how automata theory can be applied to real-world systems, especially interactive games
